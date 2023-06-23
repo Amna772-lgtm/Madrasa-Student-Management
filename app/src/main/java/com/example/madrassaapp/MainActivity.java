@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
                 String uname=username.getText().toString();
                 String Pwd=pwd.getText().toString();
 
-                if((uname.equals("student")) && (Pwd.equals("123")))
+                if((uname.equals("user")) && (Pwd.equals("123")))
                 {
                     Intent intent=new Intent(getApplicationContext(), MainPage.class);
                     startActivity(intent);
