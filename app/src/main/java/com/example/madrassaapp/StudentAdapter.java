@@ -34,8 +34,10 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentV
         holder.textViewName.setText(student.getName());
         holder.textViewClass.setText(student.getClassName());
         holder.textViewAge.setText(String.valueOf(student.getAge()));
+        holder.textViewSabqi.setText(String.valueOf(student.getSabqi()));
+        holder.textViewManzil.setText(String.valueOf(student.getManzil()));
 
-        /*holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Open the StudentDetailsActivity and pass the student ID
@@ -44,7 +46,7 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentV
                 intent.putExtra("student_id", student.getId());
                 context.startActivity(intent);
             }
-        });*/
+        });
     }
 
 
@@ -60,6 +62,8 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentV
         TextView textViewName;
         TextView textViewClass;
         TextView textViewAge;
+        TextView textViewSabqi;
+        TextView textViewManzil;
 
         public StudentViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -67,6 +71,8 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentV
             textViewName = itemView.findViewById(R.id.textViewName);
             textViewClass = itemView.findViewById(R.id.textViewClass);
             textViewAge = itemView.findViewById(R.id.textViewAge);
+            textViewSabqi = itemView.findViewById(R.id.textViewSabqi);
+            textViewManzil = itemView.findViewById(R.id.textViewManzil);
         }
     }
 }

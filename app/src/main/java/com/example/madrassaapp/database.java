@@ -6,11 +6,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import com.example.madrassaapp.student;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class database extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
@@ -55,7 +53,7 @@ public class database extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_STUDENTS);
 
         // Create the table again
-         onCreate(db);
+        onCreate(db);
     }
 
     public long insertStudent(student student) {
@@ -77,39 +75,84 @@ public class database extends SQLiteOpenHelper {
         return insertedRowId;
     }
 
+    public List<student> getAllStudents() {
+        List<student> studentList = new ArrayList<>();
 
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_STUDENTS, null);
 
-        public List<student> getAllStudents() {
-            List<student> studentList = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
+                @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
+                @SuppressLint("Range") int age = cursor.getInt(cursor.getColumnIndex(COLUMN_AGE));
+                @SuppressLint("Range") String className = cursor.getString(cursor.getColumnIndex(COLUMN_CLASS));
+                @SuppressLint("Range") String surah = cursor.getString(cursor.getColumnIndex(COLUMN_SURAH_NUMBER));
+                @SuppressLint("Range") int fverse = cursor.getInt(cursor.getColumnIndex(COLUMN_FIRST_VERSE));
+                @SuppressLint("Range") int lverse = cursor.getInt(cursor.getColumnIndex(COLUMN_LAST_VERSE));
+                @SuppressLint("Range") String sabqi = cursor.getString(cursor.getColumnIndex(COLUMN_SABQI_PARA));
+                @SuppressLint("Range") String manzil = cursor.getString(cursor.getColumnIndex(COLUMN_MANZIL_PARA));
 
-            SQLiteDatabase db = getReadableDatabase();
-            Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_STUDENTS, null);
-
-            if (cursor.moveToFirst()) {
-                do {
-                    @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
-                    @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
-                    @SuppressLint("Range") int age = cursor.getInt(cursor.getColumnIndex(COLUMN_AGE));
-                    @SuppressLint("Range") String className = cursor.getString(cursor.getColumnIndex(COLUMN_CLASS));
-                    @SuppressLint("Range") String surah = cursor.getString(cursor.getColumnIndex(COLUMN_SURAH_NUMBER));
-                    @SuppressLint("Range") int fverse = cursor.getInt(cursor.getColumnIndex(COLUMN_FIRST_VERSE));
-                    @SuppressLint("Range") int lverse = cursor.getInt(cursor.getColumnIndex(COLUMN_LAST_VERSE));
-                    @SuppressLint("Range") String sabqi = cursor.getString(cursor.getColumnIndex(COLUMN_SABQI_PARA));
-                    @SuppressLint("Range") String manzil = cursor.getString(cursor.getColumnIndex(COLUMN_MANZIL_PARA));
-
-                    student student = new student(name, age, className, surah, fverse, lverse, sabqi, manzil);
-                    student.setId(id);
-                    studentList.add(student);
-                } while (cursor.moveToNext());
-            }
-
-            cursor.close();
-            db.close();
-
-            return studentList;
+                student student = new student(name, age, className, surah, fverse, lverse, sabqi, manzil);
+                student.setId(id);
+                studentList.add(student);
+            } while (cursor.moveToNext());
         }
 
-    // Other CRUD operations and methods to retrieve data
-    // ...
-}
+        cursor.close();
+        db.close();
 
+        return studentList;
+    }
+
+    public student getStudentById(int id) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_STUDENTS, null, COLUMN_ID + " = ?", new String[]{String.valueOf(id)}, null, null, null);
+        student student = null;
+
+        if (cursor != null && cursor.moveToFirst()) {
+            @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
+            @SuppressLint("Range") int age = cursor.getInt(cursor.getColumnIndex(COLUMN_AGE));
+            @SuppressLint("Range") String className = cursor.getString(cursor.getColumnIndex(COLUMN_CLASS));
+            @SuppressLint("Range") String surah = cursor.getString(cursor.getColumnIndex(COLUMN_SURAH_NUMBER));
+            @SuppressLint("Range") int fverse = cursor.getInt(cursor.getColumnIndex(COLUMN_FIRST_VERSE));
+            @SuppressLint("Range") int lverse = cursor.getInt(cursor.getColumnIndex(COLUMN_LAST_VERSE));
+            @SuppressLint("Range") String sabqi = cursor.getString(cursor.getColumnIndex(COLUMN_SABQI_PARA));
+            @SuppressLint("Range") String manzil = cursor.getString(cursor.getColumnIndex(COLUMN_MANZIL_PARA));
+
+            student = new student(name, age, className, surah, fverse, lverse, sabqi, manzil);
+            student.setId(id);
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+
+        db.close();
+
+        return student;
+    }
+
+    public void updateStudent(student student) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NAME, student.getName());
+        values.put(COLUMN_AGE, student.getAge());
+        values.put(COLUMN_CLASS, student.getClassName());
+        values.put(COLUMN_SURAH_NUMBER, student.getSurah());
+        values.put(COLUMN_FIRST_VERSE, student.getFverse());
+        values.put(COLUMN_LAST_VERSE, student.getLverse());
+        values.put(COLUMN_SABQI_PARA, student.getSabqi());
+        values.put(COLUMN_MANZIL_PARA, student.getManzil());
+
+        db.update(TABLE_STUDENTS, values, COLUMN_ID + " = ?", new String[]{String.valueOf(student.getId())});
+        db.close();
+    }
+
+    public void deleteStudent(student student) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_STUDENTS, COLUMN_ID + " = ?", new String[]{String.valueOf(student.getId())});
+        db.close();
+    }
+}
